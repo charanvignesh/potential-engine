@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Server Error</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="index-body">
+    <div class="main-container upload-page" style="padding-top: 50px;">
+        <header>
+            <h1 class="main-title" style="color: var(--danger-color);"><i class="fas fa-exclamation-circle"></i> Application Error</h1>
+            <p class="subtitle">A critical error has occurred.</p>
+        </header>
+
+        <div class="form-card" style="max-width: 600px; margin: 30px auto; text-align: center; border-left: 5px solid var(--danger-color);">
+            <p style="font-size: 1.1em; color: var(--secondary-color);">{{ message }}</p>
+            <p style="margin-top: 20px; font-size: 0.9em; color: #666;">Please check the server console for details or ensure all necessary files are present.</p>
+            <a href="{{ url_for('index') }}" class="submit-button" style="display: inline-block; width: auto; background-color: var(--primary-color);">
+                <i class="fas fa-arrow-left"></i> Go Back to Upload
+            </a>
+        </div>
+    </div>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</body>
+</html>

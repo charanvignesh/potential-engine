@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Analysis Results</title>
+</head>
+<body>
+    <h1>Fault Diagnosis & RUL Prediction</h1>
+
+    <h2>Predicted Fault Type: <b>{{fault}}</b></h2>
+    <h2>Remaining Useful Life (RUL): <b>{{years}} years {{months}} months</b></h2>
+
+    <h3>Signal Plots</h3>
+    <img src="{{vib_plot}}" width="600">
+    <img src="{{mag_plot}}" width="600">
+
+    <h3>Deviation Comparison</h3>
+    <img src="{{deviation_plot}}" width="600">
+
+    <h3>Feature Map (Test Data)</h3>
+    <img src="{{feature_test}}" width="600">
+
+</body>
+</html>

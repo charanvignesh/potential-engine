@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Motor Details</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="container">
+    <h2>Enter Motor Details</h2>
+    <form method="POST">
+        <label>Motor Type:</label><input type="text" name="motor_type" required>
+        <label>Phase Type:</label><input type="text" name="phase_type" required>
+        <label>Horsepower (HP):</label><input type="text" name="hp" required>
+        <label>Voltage (V):</label><input type="text" name="voltage" required>
+        <button type="submit">Next</button>
+    </form>
+</div>
+</body>
+</html>

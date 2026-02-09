@@ -1,0 +1,349 @@
+/* Import Google Font - Using 'Montserrat' for a professional, technical look */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Roboto:wght@300;400;700&display=swap');
+
+:root {
+    /* Professional Color Palette */
+    --primary-color: #004c6d; /* Deep Teal/Navy */
+    --secondary-color: #333333; /* Dark Gray for text */
+    --accent-color: #00a896; /* Teal Accent */
+    --warning-color: #f39c12; /* Orange */
+    --danger-color: #e74c3c; /* Red */
+    --success-color: #27ae60; /* Green */
+    --bg-light: #f4f7f6; /* Very Light Gray Background */
+    --card-bg: #ffffff; /* Pure White Card Background */
+    --font-family-primary: 'Montserrat', sans-serif;
+    --font-family-secondary: 'Roboto', sans-serif;
+}
+
+body { 
+    font-family: var(--font-family-secondary); 
+    background: var(--bg-light); 
+    margin: 0; 
+    padding: 0;
+    color: var(--secondary-color);
+    line-height: 1.6;
+}
+
+/* --- Typography --- */
+h1, h2, h3 {
+    font-family: var(--font-family-primary);
+    color: var(--primary-color);
+    margin-top: 0;
+}
+.main-title {
+    font-size: 2.2em;
+    font-weight: 700;
+}
+.subtitle {
+    color: #666;
+    font-weight: 400;
+}
+
+/* --- Layout & Structure --- */
+.container, .container-fluid { 
+    width: 95%; 
+    max-width: 1400px; 
+    margin: 20px auto; 
+    padding: 0 10px;
+}
+.header-bar {
+    background: var(--primary-color);
+    color: white;
+    padding: 15px 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.header-bar h1 {
+    color: white;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+.header-bar .subtitle {
+    color: #b3d9ff;
+    font-size: 0.9em;
+}
+
+/* --- Cards & Components --- */
+.card, .form-card, .kpi-card { 
+    background: var(--card-bg); 
+    padding: 25px; 
+    border-radius: 8px; 
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border-left: 5px solid var(--accent-color); /* Default accent border */
+}
+.card:hover, .kpi-card:hover {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* --- HEALTH STATUS COLORS (New for visual feedback) --- */
+.result-card {
+    transition: all 0.5s ease;
+}
+
+.status-normal {
+    border-left: 5px solid var(--success-color) !important;
+}
+.status-warning {
+    border-left: 5px solid var(--warning-color) !important;
+    background-color: #fffde7; /* Light yellow background */
+}
+.status-critical {
+    border-left: 5px solid var(--danger-color) !important;
+    background-color: #fce4e4; /* Light red background */
+}
+
+
+/* --- Input/Form Styling (index.html) --- */
+.upload-page {
+    text-align: center;
+    padding-top: 50px;
+}
+.form-card {
+    max-width: 500px;
+    margin: 30px auto;
+    text-align: left;
+    border-left: 5px solid var(--primary-color);
+}
+.form-title {
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--bg-light);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+.input-group {
+    margin-bottom: 20px;
+}
+.input-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--secondary-color);
+    font-family: var(--font-family-primary);
+}
+.input-group .icon {
+    color: var(--accent-color);
+    margin-right: 5px;
+}
+input[type="file"] {
+    display: block;
+    width: 100%;
+    padding: 10px 0;
+    border: none;
+}
+.file-note {
+    font-size: 0.8em;
+    color: #888;
+    margin-top: 5px;
+}
+
+/* Select and Text/Number Inputs */
+input[type="text"], input[type="number"], select { 
+    padding: 12px; 
+    width: 100%; 
+    border-radius: 4px; 
+    border: 1px solid #ddd;
+    box-sizing: border-box;
+    font-size: 1em;
+    background-color: #fff;
+    transition: border-color 0.3s;
+}
+input[type="text"]:focus, input[type="number"]:focus, select:focus {
+    border-color: var(--accent-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 168, 150, 0.1);
+}
+
+/* Custom styling for the select dropdown */
+select {
+    appearance: none; 
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    /* Custom arrow using SVG Data URI */
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><path fill="%23333" d="M10.293 3.293L6 7.586 1.707 3.293A1 1 0 00.293 4.707l5 5a1 1 0 001.414 0l5-5a1 1 0 10-1.414-1.414z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 30px;
+}
+
+.submit-button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: 600;
+    transition: background-color 0.3s, transform 0.1s;
+    display: block;
+    width: 100%;
+    margin-top: 20px;
+}
+.submit-button:hover {
+    background-color: #006b9b;
+    transform: translateY(-1px);
+}
+.submit-button i {
+    margin-right: 8px;
+}
+
+/* --- Dashboard Specific Styles (dashboard.html) --- */
+
+/* KPI Grid - 1.5fr for Info | 1fr for Fault/RUL | 1fr for Health Gauge */
+.kpi-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr; 
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.kpi-card {
+    text-align: center;
+    padding: 20px;
+}
+.kpi-card h2 {
+    font-size: 1.3em;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.kpi-card h2 i {
+    margin-right: 10px;
+    color: var(--accent-color);
+}
+.info-card {
+    text-align: left;
+}
+.info-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0 0 0;
+}
+.info-card li {
+    padding: 8px 0;
+    border-bottom: 1px dotted #eee;
+    font-size: 1.1em;
+}
+.info-card li:last-child {
+    border-bottom: none;
+}
+.info-card strong {
+    color: var(--primary-color);
+    font-weight: 600;
+    margin-right: 5px;
+}
+
+/* Result Highlighting */
+.result-highlight {
+    font-family: var(--font-family-primary);
+    font-size: 1.8em;
+    font-weight: 700;
+    padding: 5px 0;
+    margin: 10px 0;
+    text-transform: uppercase;
+}
+
+/* Fault Colors */
+.fault-normal { color: var(--success-color); }
+.fault-bearing-fault, .fault-front_bearing_damage { color: var(--danger-color); }
+.fault-misalignment { color: var(--warning-color); }
+.fault-prediction-error { color: #888; } /* Gray for errors */
+
+/* RUL Styles */
+.rul {
+    color: var(--accent-color);
+    font-size: 2em;
+}
+.detail-text {
+    font-size: 0.9em;
+    color: #888;
+    margin-top: 10px;
+}
+
+/* Graph Section */
+.graph-section {
+    margin-bottom: 30px;
+}
+.section-title {
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    border-left: 4px solid var(--accent-color);
+    padding-left: 15px;
+    font-size: 1.5em;
+    font-weight: 600;
+}
+.section-title i {
+    color: var(--accent-color);
+    margin-right: 10px;
+}
+
+.graph-card {
+    padding: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+    width: calc(50% - 10px);
+    display: inline-block;
+    vertical-align: top;
+    box-sizing: border-box;
+}
+.graph-card:nth-child(even) {
+    margin-right: 20px;
+}
+.large-card {
+    width: 100%;
+}
+.graph-card h3 {
+    color: var(--secondary-color);
+    font-size: 1.2em;
+    margin-bottom: 15px;
+    border-bottom: 1px dashed #eee;
+    padding-bottom: 10px;
+}
+
+/* Back Link */
+.back-link {
+    text-align: center;
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+.back-link a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-size: 1.1em;
+    font-weight: 600;
+    transition: color 0.2s;
+}
+.back-link a:hover {
+    color: var(--accent-color);
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 1024px) {
+    .kpi-grid {
+        grid-template-columns: 1fr 1fr; 
+    }
+    .kpi-card.wider-info { 
+        grid-column: 1 / -1;
+    }
+    .graph-card {
+        width: 100%;
+        margin-right: 0 !important;
+        margin-bottom: 20px;
+    }
+    .graph-card:nth-child(even) {
+        margin-right: 0 !important;
+    }
+}
+@media (max-width: 600px) {
+    .kpi-grid {
+        grid-template-columns: 1fr;
+    }
+    .main-container {
+        padding: 0 10px;
+    }
+    .main-title {
+        font-size: 1.8em;
+    }
+}

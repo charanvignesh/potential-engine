@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Motor Dashboard | {{ final_fault }}</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+<div class="header-bar">
+    <div class="container-fluid">
+        <h1>Motor Analysis Dashboard 🔬</h1>
+        <p class="subtitle">Diagnostic results for **{{ motor.motor_type }}** ({{ motor.hp }} HP)</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="kpi-grid">
+        <div class="kpi-card info-card wider-info"> 
+            <h2><i class="fas fa-cogs"></i> Motor Info</h2>
+            <ul>
+                <li><strong>Type:</strong> {{ motor.motor_type }}</li>
+                <li><strong>Phase:</strong> {{ motor.phase_type }}</li>
+                <li><strong>HP:</strong> {{ motor.hp }}</li>
+                <li><strong>Voltage:</strong> {{ motor.voltage }} V</li>
+            </ul>
+        </div>
+
+        <div class="kpi-card result-card status-{{ health_status }}">
+            <h2><i class="fas fa-exclamation-triangle"></i> Predicted Fault</h2>
+            <p class="result-highlight fault-{{ final_fault | lower | replace(' ', '-') }}">{{ final_fault }}</p>
+            <h2><i class="fas fa-hourglass-half"></i> Remaining Useful Life (RUL)</h2>
+            <p class="result-highlight rul">{{ final_rul }}</p>
+            <p class="detail-text">Feature Deviation: {{ dev }}</p>
+        </div>
+        
+        <div class="kpi-card gauge-card">
+            <h2><i class="fas fa-heartbeat"></i> Motor Health Score</h2>
+            <div id="healthGauge" style="height:250px;"></div>
+        </div>
+    </div>
+
+    <div class="graph-section">
+        <h2 class="section-title"><i class="fas fa-wave-square"></i> Time Series Signals</h2>
+        <div class="card graph-card">
+            <h3>Vibration Signals (X, Y, Z)</h3>
+            <div id="vibPlot" style="height:400px;"></div>
+        </div>
+        <div class="card graph-card">
+            <h3>Magnetic Signals (X, Y, Z)</h3>
+            <div id="magPlot" style="height:400px;"></div>
+        </div>
+    </div>
+
+    <div class="graph-section">
+        <h2 class="section-title"><i class="fas fa-chart-bar"></i> Frequency Domain Analysis (PSD)</h2>
+        <div class="card graph-card">
+            <h3>Power Spectral Density (Vibration X)</h3>
+            <div id="psdVibPlot" style="height:400px;"></div>
+        </div>
+        <div class="card graph-card">
+            <h3>Power Spectral Density (Magnetic X)</h3>
+            <div id="psdMagPlot" style="height:400px;"></div>
+        </div>
+    </div>
+
+    <div class="graph-section">
+        <h2 class="section-title"><i class="fas fa-braille"></i> Feature Comparison</h2>
+        <div class="card graph-card large-card">
+            <h3>Analyzed Features Heatmap</h3>
+            <div id="heatmapPlot" style="height:550px;"></div>
+            <p class="detail-text">Comparing key time-domain and frequency-domain features of the analyzed data.</p>
+        </div>
+    </div>
+    
+    <div class="back-link">
+        <a href="{{ url_for('index') }}"><i class="fas fa-arrow-left"></i> Analyze Another Motor</a>
+    </div>
+</div>
+
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+<script>
+    // Data passed from Flask
+    const samples = {{ samples | safe }};
+    const vibData = {{ vib_data | safe }};
+    const magData = {{ mag_data | safe }};
+    const f_vib = {{ f_vib | safe }};
+    const P_vib = {{ P_vib | safe }};
+    const f_mag = {{ f_mag | safe }};
+    const P_mag = {{ P_mag | safe }};
+    const features = {{ features | safe }};
+    const featNames = Object.keys(features);
+    const healthFrac = {{ health_frac | safe }};
+</script>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

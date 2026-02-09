@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Upload Motor Data</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="container">
+    <h2>Upload 1-hour CSV Data</h2>
+    <form action="{{ url_for('analyze') }}" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="motor_type" value="{{ motor.motor_type }}">
+        <input type="hidden" name="phase_type" value="{{ motor.phase_type }}">
+        <input type="hidden" name="hp" value="{{ motor.hp }}">
+        <input type="hidden" name="voltage" value="{{ motor.voltage }}">
+        <input type="file" name="file" required>
+        <button type="submit">Analyze</button>
+    </form>
+</div>
+</body>
+</html>
