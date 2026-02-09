@@ -7,5 +7,5 @@ matplotlib
 seaborn
 Flask==3.1.0
 flask-cors
-gunicorn==5.0.0
+gunicorn==23.0.0
 openpyxl
