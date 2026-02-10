@@ -2,6 +2,7 @@ import os
 import pandas as pd
 import numpy as np
 import pickle
+import requests
 from flask import Flask, render_template, request, jsonify, send_from_directory
 from flask_cors import CORS
 from scipy.fft import rfft, rfftfreq
@@ -146,6 +147,56 @@ def get_health_status(frac, fault_label):
         return "warning"
     else:
         return "normal"
+
+
+# ---------------- ThingSpeak Integration ----------------
+def fetch_thingspeak_data(channel_id, api_key=None, result_limit=100):
+    """
+    Fetches the last N results from a ThingSpeak channel.
+    Returns a pandas DataFrame with columns mapped to sensor names.
+    """
+    url = f"https://api.thingspeak.com/channels/{channel_id}/feeds.json?results={result_limit}"
+    if api_key:
+        url += f"&api_key={api_key}"
+
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        data = response.json()
+        feeds = data.get("feeds", [])
+        
+        if not feeds:
+            raise ValueError("No data found in ThingSpeak channel.")
+
+        df = pd.DataFrame(feeds)
+        
+        # Mapping based on user input
+        # Field 1,2,3 -> Magnetic X, Y, Z
+        # Field 4,5,6 -> Vibration X, Y, Z
+        rename_map = {
+            "field1": "MLX90393 X (mT)",
+            "field2": "MLX90393 Y (mT)",
+            "field3": "MLX90393 Z (mT)",
+            "field4": "Vibration X (mm/s)",
+            "field5": "Vibration Y (mm/s)",
+            "field6": "Vibration Z (mm/s)"
+        }
+        
+        df = df.rename(columns=rename_map)
+        
+        # Ensure numeric types
+        for col in rename_map.values():
+            if col in df.columns:
+                df[col] = pd.to_numeric(df[col], errors='coerce')
+        
+        # Drop rows with NaN if any
+        df = df.dropna()
+        
+        return df, data.get("channel", {})
+
+    except Exception as e:
+        print(f"Error fetching ThingSpeak data: {e}")
+        return None, None
 
 
 # ---------------- Routes ----------------
@@ -336,6 +387,84 @@ def api_predict():
             }
         }), 200
         
+    except Exception as e:
+        return jsonify({"error": f"Processing Error: {str(e)}"}), 500
+
+
+@app.route("/api/predict_thingspeak", methods=["POST"])
+def api_predict_thingspeak():
+    """
+    API endpoint to fetch data from ThingSpeak and return prediction.
+    Expects JSON body: { "channel_id": "...", "api_key": "..." }
+    """
+    if clf is None or le is None or normal_centroid is None:
+        return jsonify({"error": "Model files missing!"}), 500
+
+    req_data = request.get_json()
+    if not req_data or "channel_id" not in req_data:
+        return jsonify({"error": "Missing channel_id"}), 400
+
+    channel_id = req_data["channel_id"]
+    api_key = req_data.get("api_key", None)
+    
+    # Fetch data
+    df, channel_info = fetch_thingspeak_data(channel_id, api_key)
+    
+    if df is None or df.empty:
+        return jsonify({"error": "Failed to fetch data from ThingSpeak or data is empty."}), 400
+
+    try:
+        # 1️⃣ Feature Extraction
+        features_df = compute_features(df)
+        features_dict = features_df.iloc[0].round(4).to_dict()
+        
+        # 2️⃣ Prediction
+        prediction_raw = clf.predict(features_df)[0]
+        pred_label = le.inverse_transform([prediction_raw])[0]
+        
+        # 3️⃣ Deviation & RUL
+        test_features = features_df.values.flatten()
+        dev = float(np.linalg.norm(test_features - normal_centroid.flatten()))
+        dev_ref = max(np.linalg.norm(normal_centroid.flatten()) * 0.15, 1.0)
+        
+        years, months, frac = map_deviation_to_rul(dev, dev_ref)
+        health_status = get_health_status(frac, pred_label)
+        
+        # 4️⃣ PSD for Plot
+        f_vib, P_vib = psd(df["Vibration X (mm/s)"])
+        f_mag, P_mag = psd(df["MLX90393 X (mT)"])
+        
+        return jsonify({
+            "success": True,
+            "channel_info": {
+                "name": channel_info.get("name", "Unknown"),
+                "id": channel_id
+            },
+            "prediction": {
+                "fault": pred_label,
+                "rul": f"{years} years {months} months",
+                "rul_years": years,
+                "rul_months": months,
+                "health_percentage": int(frac * 100),
+                "health_status": health_status,
+                "deviation": round(dev, 2)
+            },
+            "data": {
+                "samples": df.index.tolist(),
+                "vibration": {
+                    "x": df["Vibration X (mm/s)"].tolist(),
+                    "y": df["Vibration Y (mm/s)"].tolist(),
+                    "z": df["Vibration Z (mm/s)"].tolist()
+                },
+                "magnetic": {
+                    "x": df["MLX90393 X (mT)"].tolist(),
+                    "y": df["MLX90393 Y (mT)"].tolist(),
+                    "z": df["MLX90393 Z (mT)"].tolist()
+                },
+                "features": features_dict
+            }
+        }), 200
+
     except Exception as e:
         return jsonify({"error": f"Processing Error: {str(e)}"}), 500
 
