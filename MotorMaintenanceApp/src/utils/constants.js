@@ -2,7 +2,7 @@
 // For Android Emulator: use 'http://10.0.2.2:5000'
 // For iOS Simulator: use 'http://localhost:5000'
 // For Real Device: use your computer's IP address
-export const API_BASE_URL = 'http://172.20.10.2:5000'; // Updated with your computer's IP
+export const API_BASE_URL = 'https://potential-engine-1.onrender.com'; // Updated with your computer's IP
 
 export const MOTOR_TYPES = [
   { label: 'AC Induction', value: 'AC Induction' },

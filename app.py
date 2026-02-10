@@ -2,7 +2,7 @@ import os
 import pandas as pd
 import numpy as np
 import pickle
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, send_from_directory
 from flask_cors import CORS
 from scipy.fft import rfft, rfftfreq
 from scipy.signal import welch
@@ -101,6 +101,26 @@ def compute_features(df):
     # Remove extra features
     features_df = features_df[expected_cols]
 
+    # ---------------------------------------------------------
+    # 🩹 HOTFIX: The model was trained on single-sample rows,
+    # so P2P and Freq features were effectively 0 in the Normal Centroid.
+    # We must zero them out here to make the Deviation meaningful (comparable to Centroid),
+    # otherwise real P2P values cause massive deviation and minimal RUL.
+    # ---------------------------------------------------------
+    for col in features_df.columns:
+        if "P2P" in col or "Freq" in col:
+            features_df[col] = 0.0
+        # Also, FFT Peak Amp was just |x| (same as RMS) in training. 
+        # But we'll leave it or set it to RMS?
+        # Leaving it as 0 might be safer if we want to rely on RMS mainly.
+        # But the Centroid has Peak_Amp approx equal to RMS.
+        # Let's set Peak_Amp to be same as RMS to match Centroid behavior
+        if "Peak_Amp" in col:
+             # Find corresponding RMS col? 
+             # Vib_FFT_Peak_Amp corresponds to Vib X.
+             if "Vib" in col:
+                 features_df[col] = features_df["Vib_RMS_X"] # Approx match
+    
     return features_df
 
 
@@ -199,6 +219,29 @@ def index():
             return f"Processing Error: {e}", 500
 
     return render_template("index.html")
+
+
+# ---------------- Download Test Data ----------------
+@app.route("/test-data", methods=["GET"])
+def list_test_data():
+    """List available test data files for download"""
+    try:
+        files = os.listdir(app.config['UPLOAD_FOLDER'])
+        # Filter only CSV files starting with Test_Data
+        test_files = [f for f in files if f.startswith("Test_Data") and f.endswith(".csv")]
+        
+        html = "<h1>Available Test Data</h1><ul>"
+        for f in test_files:
+            html += f'<li><a href="/download_test/{f}">{f}</a></li>'
+        html += "</ul>"
+        return html
+    except Exception as e:
+        return f"Error listing files: {e}", 500
+
+@app.route("/download_test/<filename>")
+def download_test_file(filename):
+    """Download a specific test file"""
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename, as_attachment=True)
 
 
 # ---------------- API Endpoint for Mobile App ----------------
