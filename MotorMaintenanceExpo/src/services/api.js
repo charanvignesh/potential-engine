@@ -50,3 +50,33 @@ export const analyzeMotor = async (motorDetails, csvFile) => {
         }
     }
 };
+
+/**
+ * Get prediction from ThingSpeak data
+ * @param {string} channelId - ThingSpeak Channel ID
+ * @param {string} apiKey - Read API Key (optional)
+ * @returns {Promise<Object>} - Prediction results
+ */
+export const analyzeMotorThingSpeak = async (channelId, apiKey) => {
+    try {
+        console.log('Sending ThingSpeak request to:', `${API_BASE_URL}/api/predict_thingspeak`);
+
+        const response = await axios.post(`${API_BASE_URL}/api/predict_thingspeak`, {
+            channel_id: channelId,
+            api_key: apiKey
+        }, {
+            timeout: 30000,
+        });
+
+        return response.data;
+    } catch (error) {
+        console.error('API Error:', error);
+        if (error.response) {
+            throw new Error(error.response.data.error || 'Server error occurred');
+        } else if (error.request) {
+            throw new Error('Cannot connect to server. Please check if the Flask app is running.');
+        } else {
+            throw new Error(error.message || 'An unexpected error occurred');
+        }
+    }
+};
