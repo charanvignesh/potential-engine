@@ -108,7 +108,7 @@ const HomeScreen = ({ navigation }) => {
     return (
         <ScrollView style={styles.container}>
             <View style={styles.header}>
-                <Text style={styles.title}>⚙️ Motor Predictive Maintenance</Text>
+                <Text style={styles.title}>MSense</Text>
                 <Text style={styles.subtitle}>
                     Upload operational data to diagnose fault and predict RUL
                 </Text>
